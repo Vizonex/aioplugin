@@ -1,0 +1,7 @@
+-e .
+pytest==9.0.2
+pytest-cov==7.1.0
+anyio>=4.13.0
+trio>=0.33.0
+uvloop>=0.21.0; sys_platform != 'win32'
+winloop>=0.6.0; sys_platform == 'win32'
