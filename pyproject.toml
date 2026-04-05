@@ -19,3 +19,7 @@ requires = ["setuptools"]
 
 [tool.setuptools.dynamic]
 version = {attr = "aioplugin.__version__"}
+
+[project.urls]
+    homepage = "https://github.com/Vizonex/aioplugin"
+    repository = "https://github.com/Vizonex/aioplugin.git"

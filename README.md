@@ -1,13 +1,17 @@
 # AioPlugin
 
+[![PyPI version](https://badge.fury.io/py/aioplugin.svg)](https://badge.fury.io/py/aioplugin)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/aioplugin)](https://pypi.org/project/aioplugin)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 A tool inspired by the way pluggy works with pytest but is meant to help build application-like 
-builds using asynchronous event wrappers. It is the successor to aiocallback as it's primary rewrite. 
-Libraries such as freezabledict2, frozenlist and reductable-params act as a few of the library's 
-primary resources and backbones.
+builds using asynchronous event wrappers. It is the successor to [aiocallback](https://github.com/Vizonex/aiocallback) as it's primary rewrite, however aiocallback does plan to get some of this project's backend stuff in the future so that aiocallback never goes stale but helps keep aioplugin a bit more neat and organized.
+
 
 It takes inspiration from the popular discord.py and pluggy libraries allowing you to build very
 cleaver asynchronous programs. It can be ran in some very unique ways and allows for other 
-developers to add on to your library's callbacks in some very clean and surprising ways.
+developers to add on to your application's callbacks in some very clean/unique and surprising ways.
 
 
 It can be used with virtually any asynchronous implementations as long as it uses the `await` 
@@ -60,3 +64,12 @@ if __name__ == "__main__":
 ```
 
 There is much more documentation is coming soon.
+
+## Other Dependencies
+
+Libraries such as these are the library's main back bones. They were developed for this library specifically with very a tiny footprint, these will not eat diskspace at all if this was your primary concern, these were seperated specifically if developers had something else in mind:
+
+- [freezabledict2](https://github.com/Vizonex/freezabledict2) there were so many names taken so many times that a #2 was needed. It works the same way as FrozenList giving the option to mutate a dictionary/hash-table until frozen.
+
+- [reductable-params](https://github.com/Vizonex/reductabale-params) This library is the main tools responsible for giving developers like you the freedom of positioning parameters however you want or ignore them and adding new ones using hooks. If you want to make your own stuff, reductable-params is perfect for writing your own callable plugin systems and has powerful performance benefits thanks to it's use of C & Cython however it also has a pure python fallback if you plan to use something a little bit more unsupported.
+
