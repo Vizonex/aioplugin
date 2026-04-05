@@ -3,6 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/aioplugin.svg)](https://badge.fury.io/py/aioplugin)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/aioplugin)](https://pypi.org/project/aioplugin)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![IDIM](https://raw.githubusercontent.com/Vizonex/IDIM-Badge/master/badge.svg)](https://github.com/Vizonex/IDIM-Badge)
 
 
 A tool inspired by the way pluggy works with pytest but is meant to help build application-like 
