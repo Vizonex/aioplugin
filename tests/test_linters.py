@@ -21,7 +21,7 @@ class RuffLinter:
     def get_bin(self) -> None:
         if not typing.TYPE_CHECKING:
             ruff = pytest.importorskip("ruff", reason="No ruff linter avalible")
-        else: # pragma: no branch
+        else:  # pragma: no branch
             import ruff
         return ruff.find_ruff_bin()
 
