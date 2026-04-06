@@ -1,4 +1,5 @@
 -e .
+-r lint.txt
 pytest
 pytest-cov==7.1.0
 anyio
