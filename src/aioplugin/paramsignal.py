@@ -1,7 +1,8 @@
 """
-Paramspec version of aiosignal, it uses a special system for allowing parameter customization
-while allowing the end developer to access important typehints.
+Paramspec version of aiosignal, it uses a special system for allowing parameter
+customization while allowing the end developer to access important typehints.
 """
+
 from __future__ import annotations
 
 import sys
@@ -30,9 +31,9 @@ _T = TypeVar("_T")
 # Having paramspec benefits the programmer developing the application
 # and the developer using the application. Having a 2 way system that provides
 # the right typehints can be the hardest part. We have a system that enables
-# user-devs to rearrange and filter parameters however they please and add additional
-# items using a hooking system to behave simillar to pytest's fixtures allowing
-# for any additional items to be taken if needed.
+# user-devs to rearrange and filter parameters however they please and add
+# additional items using a hooking system to behave simillar to pytest's
+# fixtures allowing for any additional items to be taken if needed.
 
 
 class ParamSignal(Generic[_P], FrozenList[Callable[..., Awaitable[object]]]):
@@ -53,8 +54,8 @@ class ParamSignal(Generic[_P], FrozenList[Callable[..., Awaitable[object]]]):
     def __call__(
         self, func: Callable[_P2, Coroutine[Any, Any, _T]]
     ) -> Callable[_P2, Coroutine[Any, Any, _T]]:
-        """Decorator for adding a callback for this signal. It will be wrapped in a
-        to only obtain needed parameters"""
+        """Decorator for adding a callback for this signal. It will be wrapped
+        in a reduce class to only obtain needed parameters"""
         self.append(func)
         return func
 
@@ -92,13 +93,14 @@ class ParamSignal(Generic[_P], FrozenList[Callable[..., Awaitable[object]]]):
             # Empty do not continue
             return
         params = self._parent.install(*args, **kwargs)
-        # install any other hooks that are seen before the final sendoff takes place...
+        # install any other hooks that are seen before the final sendoff
+        # takes place...
         async with self._hooks.send(params) as hooks:
             params.update(hooks)
 
             for s in self:
-                # these are actually FrozenList[reduce] so calling it shouldn't require unpacking.
-                # I just didn't feel like typehinting it...
+                # these are actually FrozenList[reduce] so calling it shouldn't
+                # require unpacking. I just didn't feel like typehinting it...
                 await s(params)
 
     def __repr__(self) -> str:

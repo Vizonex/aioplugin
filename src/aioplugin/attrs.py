@@ -6,6 +6,9 @@ from freezabledict import FrozenDict
 from .paramsignal import ParamSignal
 from .plugin import AbstractPlugin
 
+# TODO: These might be deprecated in the future and put into the
+# documentation on how to use with other dataclass libraries.
+
 
 @define
 class AttrsPlugin(AbstractPlugin):
@@ -20,7 +23,8 @@ class AttrsPlugin(AbstractPlugin):
 
 @define(slots=True)
 class AttrsSlotsPlugin(AbstractPlugin):
-    """Use if your main plugin object requires the use of attrs object with slots enabled."""
+    """Use if your main plugin object requires the use of attrs object
+    with slots enabled."""
 
     _events: FrozenDict[str, ParamSignal[...]] = field(
         factory=FrozenDict, init=False

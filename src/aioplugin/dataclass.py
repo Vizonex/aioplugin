@@ -22,7 +22,8 @@ class DataclassPlugin(_Plugin):
 
 @dataclass(slots=True)
 class DataclassSlotsPlugin(_Plugin):
-    """Use if your main plugin object requires the use of dataclasses with slots enabled."""
+    """Use if your main plugin object requires the use of dataclasses
+    with slots enabled."""
 
     _events: FrozenDict[str, ParamSignal[...]] = field(
         default_factory=FrozenDict, init=False

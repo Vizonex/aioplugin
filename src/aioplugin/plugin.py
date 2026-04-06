@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+from abc import ABC
 from typing import cast
 
 from freezabledict import FrozenDict
@@ -8,10 +9,10 @@ from propcache import under_cached_property
 
 from .event import event
 from .paramsignal import ParamSignal
-from abc import ABC
 
 
-# incase needed ABC is also added for allowing developers to easily add in abstract methods.
+# incase needed ABC is also added for allowing developers to easily add in
+# abstract methods.
 class AbstractPlugin(ABC):
     """a Useful class for creating applications with arbitarary
     callbacks for wrapping to event objects"""
@@ -33,7 +34,8 @@ class AbstractPlugin(ABC):
     def __event_names__(self) -> frozenset[str]:
         """lists out all event attributes related to this specific object"""
         cls = self.__class__
-        # the goal is not to end up trip-wiring anything so check for attributes at the type-level.
+        # the goal is not to end up trip-wiring anything so check for attributes
+        # at the type-level.
         return frozenset(
             {
                 attr
@@ -47,10 +49,7 @@ class AbstractPlugin(ABC):
         """Checks to see if all events have been frozen or not"""
         return (
             all(
-                [
-                    cast(ParamSignal[...], e).frozen
-                    for e in self.__event_names__
-                ]
+                [cast(ParamSignal[...], e).frozen for e in self.__event_names__]
             )
             and self._events.frozen
             and self._plugins.frozen
@@ -65,7 +64,8 @@ class AbstractPlugin(ABC):
         self._events.freeze()
         self._plugins.freeze()
 
-    # TODO: Documentation on why plugins do not wrap classes and why type-level mixing is bad!
+    # TODO: Documentation on why plugins do not wrap classes and why type-level
+    # mixing is bad!
     def add_plugin(self, obj: object, name: str | None = None) -> None:
         """Adds an object's functions to a given"""
         if self._plugins.frozen:

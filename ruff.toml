@@ -1,2 +1,13 @@
-line-length = 79
+line-length = 80
 indent-width = 4
+
+[lint]
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E",
+    "W",
+    # isort
+    "I001"
+]
