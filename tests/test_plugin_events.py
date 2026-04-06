@@ -1,7 +1,9 @@
-from aioplugin import Plugin, event
 from collections.abc import AsyncIterator
 from typing import TypeVar
+
 import pytest
+
+from aioplugin import Plugin, event
 
 pytestmark = pytest.mark.anyio
 
@@ -120,9 +122,7 @@ class TestAdditionalPlugins:
             base.add_plugin(another, "another")
 
         base.freeze()
-        with pytest.raises(
-            RuntimeError, match="Cannot modify frozen plugins."
-        ):
+        with pytest.raises(RuntimeError, match="Cannot modify frozen plugins."):
             base.add_plugin(another, "another")
 
     def test_removing_plugins(
@@ -138,9 +138,7 @@ class TestAdditionalPlugins:
             base.remove_plugin("another")
 
         base.freeze()
-        with pytest.raises(
-            RuntimeError, match="Cannot modify frozen plugins."
-        ):
+        with pytest.raises(RuntimeError, match="Cannot modify frozen plugins."):
             base.remove_plugin("another")
 
     async def test_sending_with_plugin(
@@ -149,10 +147,13 @@ class TestAdditionalPlugins:
         base.add_plugin(another, "another")
         base.freeze()
         await base.on_event.send("1", 2)
-        assert another.items == [{"a":"1", "b":2}]
+        assert another.items == [{"a": "1", "b": 2}]
 
     async def test_sending_with_plugin_2(
-        self, base: Base, another: AdditionalPlugin, another_one: AdditionalPlugin2
+        self,
+        base: Base,
+        another: AdditionalPlugin,
+        another_one: AdditionalPlugin2,
     ) -> None:
         base.add_plugin(another, "another")
         base.add_plugin(another_one, "another-one")

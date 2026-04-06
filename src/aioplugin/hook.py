@@ -25,12 +25,17 @@ _Ts = TypeVarTuple("_Ts", default=Unpack[tuple[()]])
 
 
 def is_asynccontextmanagerfunction(obj: object) -> bool:
-    """Attempts to  see if object is possibly with an asynccontextmanager wrapper or not"""
+    """Attempts to  see if object is possibly with an asynccontextmanager
+    wrapper or not"""
     return (
         inspect.isasyncgenfunction(obj.__wrapped__)
         if hasattr(obj, "__wrapped__")
         else False
     )
+
+
+# TODO: Move this module into aiocallback as it's own little module.
+# it is small enough to be useful over in that library instead.
 
 
 class Hook(
@@ -53,7 +58,8 @@ class Hook(
     async def send(
         self, *args: Unpack[_Ts], **kwargs
     ) -> AsyncIterator[dict[str, object]]:
-        """Sends all life-cycles and returns them for use elsewhere as a dictionary object"""
+        """Sends all life-cycles and returns them for use elsewhere as a
+        dictionary object"""
         if not self.frozen:
             raise RuntimeError("Cannot enter into non-frozen life-cycle.")
 
