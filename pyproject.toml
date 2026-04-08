@@ -11,7 +11,7 @@ dependencies = [
     "freezabledict2>=0.1.0",
     "frozenlist>=1.8.0",
     "propcache>=0.4.1",
-    "reductable-params==0.2.2",
+    "reductable-params==0.3.0",
 ]
 
 [project.optional-dependencies]
