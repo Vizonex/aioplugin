@@ -10,10 +10,9 @@ from collections.abc import Awaitable, Callable, Coroutine
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from typing import Any, Generic, TypeVar
 
+from aiocallback.hooks import Hook, is_asynccontextmanagerfunction
 from frozenlist import FrozenList
 from reductable_params import reduce
-
-from .hook import Hook, is_asynccontextmanagerfunction
 
 # TODO: Drop 3.9 when aiolibs drops support for it.
 if sys.version_info >= (3, 10):

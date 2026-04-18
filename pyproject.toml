@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.9"
 dependencies = [
+    "aiocallback>=0.2.0",
     "freezabledict2>=0.1.0",
     "frozenlist>=1.8.0",
     "propcache>=0.4.1",
