@@ -44,21 +44,39 @@ class AbstractPlugin(ABC):
             }
         )
 
+    # Costliness is made up by the fact that we need to check if all events are
+    # frozen or for simillar edge-case scenarios.
+    @property
+    def __events__(self) -> list[ParamSignal[...]]:
+        """Lists out all modified parameter signal objects mostly used for
+        simplifying other freezing iterators. It's not intended for public
+        use unless you need something a little more low-level."""
+        return cast(
+            list[ParamSignal[...]],
+            [
+                p
+                for p in [getattr(self, e, None) for e in self.__event_names__]
+                if p is not None
+            ],
+        )
+
     @property
     def frozen(self) -> bool:
         """Checks to see if all events have been frozen or not"""
         return (
-            all(
-                [cast(ParamSignal[...], e).frozen for e in self.__event_names__]
-            )
+            all([e.frozen for e in self.__events__])
             and self._events.frozen
             and self._plugins.frozen
         )
 
     def freeze(self):
         """Freezes all events wrapped to this specific object"""
-        for e in self.__event_names__:
-            cast(ParamSignal[...], getattr(self, e)).freeze()
+        if self.frozen:
+            # Do not let overdoing reduce wrappers jack this up...
+            return
+
+        for e in self.__events__:
+            e.freeze()
 
         # do not allow the events be tampered with after being frozen over
         self._events.freeze()
