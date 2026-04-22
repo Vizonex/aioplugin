@@ -5,20 +5,13 @@ customization while allowing the end developer to access important typehints.
 
 from __future__ import annotations
 
-import sys
 from collections.abc import Awaitable, Callable, Coroutine
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, ParamSpec, TypeVar
 
 from aiocallback.hooks import Hook, is_asynccontextmanagerfunction
 from frozenlist import FrozenList
 from reductable_params import reduce
-
-# TODO: Drop 3.9 when aiolibs drops support for it.
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec
-else:
-    from typing_extensions import ParamSpec
 
 _P = ParamSpec("_P")
 # overloaders so that different parameter names or formations can be used,
