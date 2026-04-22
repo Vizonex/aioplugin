@@ -4,5 +4,5 @@ pytest
 pytest-cov==7.1.0
 anyio
 trio
-uvloop>=0.21.0; sys_platform != 'win32'
+uvloop>=0.22.1; sys_platform != 'win32'
 winloop; sys_platform == 'win32'
