@@ -2,14 +2,9 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Awaitable, Callable, Mapping
-from typing import Any, Generic, Protocol, TypeVar, overload
+from typing import Any, Concatenate, Generic, Protocol, TypeVar, overload
 
 from .paramsignal import _P, ParamSignal
-
-if sys.version_info >= (3, 10):
-    from typing import Concatenate
-else:
-    from typing_extensions import Concatenate
 
 if sys.version_info >= (3, 11):
     from typing import Self
