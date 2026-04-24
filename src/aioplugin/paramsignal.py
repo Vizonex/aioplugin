@@ -65,6 +65,9 @@ class ParamSignal(ParentSignal[_P]):
         if not (self or self._hooks):
             # Empty, do not continue
             return
+
+        # setup all required parameters needed as well
+        # as setting defaults.
         params = self.install(*args, **kwargs)
 
         # Install any other hooks that are seen
