@@ -5,12 +5,12 @@ customization while allowing the end developer to access important typehints.
 
 from __future__ import annotations
 
-from collections.abc import Awaitable, Callable, Coroutine
+from collections.abc import Awaitable, Callable
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
-from typing import Any, Generic, ParamSpec, TypeVar, cast
+from typing import Any, ParamSpec, TypeVar
 
 from aiocallback.hooks import Hook, is_asynccontextmanagerfunction
-from frozenlist import FrozenList
+from aiocallback.signals import ParentSignal
 from reductable_params import reduce
 
 # overloaders so that different parameter names or formations can be used,
@@ -20,37 +20,22 @@ _P2 = ParamSpec("_P2")
 _T = TypeVar("_T")
 
 
-# Having paramspec benefits the programmer developing the application
-# and the developer using the application. Having a 2 way system that provides
-# the right typehints can be the hardest part. We have a system that enables
-# user-devs to rearrange and filter parameters however they please and add
-# additional items using a hooking system to behave simillar to pytest's
-# fixtures allowing for any additional items to be taken if needed.
+# Having ParamSpec benefits the programmer developing the application
+# and the developer using the application. Having a 2 way system that
+# provides the right typehints and the right callables can be the
+# hardest part.
 
 
-class ParamSignal(Generic[_P], FrozenList[Callable[..., Awaitable[object]]]):
+class ParamSignal(ParentSignal[_P]):
     """A Coroutine-based signal implementation that relys on a parent
     to help define what parameters should be passed enabling typehints for
     positional and keyword arguments."""
 
-    __slots__ = ("_parent", "_hooks", "_owner")
+    __slots__ = ("_hooks",)
 
-    def __init__(
-        self, owner: object, func: Callable[_P, Awaitable[object]]
-    ) -> None:
-        super().__init__()
-        self._owner = owner
-        self._parent = reduce(func)
+    def __init__(self, owner, parent: Callable[_P, Awaitable[object]]):
+        super().__init__(owner, parent)
         self._hooks: Hook[dict[str, Any]] = Hook(owner)
-
-    def __call__(
-        self, func: Callable[_P2, Coroutine[Any, Any, _T]]
-    ) -> Callable[_P2, Coroutine[Any, Any, _T]]:
-        """Decorator for adding a callback for this signal. It will be wrapped
-        in a reduce class to only obtain needed parameters"""
-        # Just lie to it. Hooks can enable take dynamic arguments anyways...
-        self.append(cast(Callable[_P, Coroutine[Any, Any, object]], func))
-        return func
 
     def hook(
         self, func: Callable[_P2, AbstractAsyncContextManager[_T]]
@@ -71,11 +56,6 @@ class ParamSignal(Generic[_P], FrozenList[Callable[..., Awaitable[object]]]):
 
     def freeze(self) -> None:
         """freezes callbacks"""
-        # replace functions with reduce after editing them so
-        # that custom data can be safely taken in it's place.
-        items = list(map(reduce, self))
-        self.clear()
-        self.extend(items)
         self._hooks.freeze()
         super().freeze()
 
@@ -85,25 +65,20 @@ class ParamSignal(Generic[_P], FrozenList[Callable[..., Awaitable[object]]]):
         if not (self or self._hooks):
             # Empty, do not continue
             return
-        params = self._parent.install(*args, **kwargs)
+        params = self.install(*args, **kwargs)
 
         # Install any other hooks that are seen
         # before the final sendoff takes place...
         async with self._hooks.send(params) as hooks:
             params.update(hooks)
 
-            for s in self:
-                # these are actually FrozenList[reduce] so calling it shouldn't
-                # require unpacking. I just didn't feel like typehinting it...
+            # Send everything immediately, we already handled all
+            # the error checks...
+            for s in self.signals:
                 await s(params)
 
     def __repr__(self) -> str:
-        return "<{} owner={}, frozen={}, hooks={!r}, {!r}>".format(
-            self.__class__.__name__,
-            self._owner,
-            self.frozen,
-            self._hooks,
-            list(self)
-            if not self.frozen
-            else [getattr(s, "__wrapper__", s) for s in self],
+        return (
+            f"<{self.__class__.__name__} owner={self._owner},"
+            f" frozen={self.frozen}, hooks={self._hooks!r}, {list(self)!r}>"
         )
