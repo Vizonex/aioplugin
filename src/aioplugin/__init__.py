@@ -10,5 +10,5 @@ from .event import event
 from .plugin import Plugin
 
 __author__ = "Vizonex"
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 __all__ = ("event", "Plugin")

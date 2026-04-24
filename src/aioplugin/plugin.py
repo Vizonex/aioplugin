@@ -69,7 +69,7 @@ class AbstractPlugin(ABC):
             and self._plugins.frozen
         )
 
-    def freeze(self):
+    def freeze(self) -> None:
         """Freezes all events wrapped to this specific object"""
         if self.frozen:
             # Do not let overdoing reduce wrappers jack this up...
@@ -82,8 +82,6 @@ class AbstractPlugin(ABC):
         self._events.freeze()
         self._plugins.freeze()
 
-    # TODO: Documentation on why plugins do not wrap classes and why type-level
-    # mixing is bad!
     def add_plugin(self, obj: object, name: str | None = None) -> None:
         """Adds an object's functions to a given"""
         if self._plugins.frozen:
@@ -95,11 +93,12 @@ class AbstractPlugin(ABC):
             raise RuntimeError(f"plugin {name!r} already registered.")
 
         for e in self.__event_names__:
-            if func := getattr(obj, e, None):
-                if inspect.isroutine(func):
-                    # Register class's asynchronous function.
-                    # TODO: add an asynchronous check?
-                    cast(ParamSignal[...], getattr(self, e)).__call__(func)
+            if (
+                (func := getattr(obj, e, None)) is not None
+            ) and inspect.isroutine(func):
+                # Register class's asynchronous function.
+                # TODO: add an asynchronous check?
+                cast(ParamSignal[...], getattr(self, e)).append(func)
 
         # keep a reference to this object so that it doesn't go missing.
         self._plugins[name] = obj
@@ -115,12 +114,19 @@ class AbstractPlugin(ABC):
         obj = self._plugins.pop(name)
 
         for e in self.__event_names__:
-            if func := getattr(obj, e, None):
-                if inspect.isroutine(func):
-                    cast(ParamSignal[...], getattr(self, e)).remove(func)
+            if (
+                (func := getattr(obj, e, None)) is not None
+            ) and inspect.isroutine(func):
+                cast(ParamSignal[...], getattr(self, e)).append(func)
 
 
 class Plugin(AbstractPlugin):
+    """
+    Used for writing plugin-like applications.
+    These can have multiple wrappable events
+    all equiped with a lazy `freeze(...)` function.
+    """
+
     __slots__ = ("_events", "_plugins", "_cache")
 
     def __init__(self) -> None:

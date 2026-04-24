@@ -7,15 +7,15 @@ from __future__ import annotations
 
 from collections.abc import Awaitable, Callable, Coroutine
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
-from typing import Any, Generic, ParamSpec, TypeVar
+from typing import Any, Generic, ParamSpec, TypeVar, cast
 
 from aiocallback.hooks import Hook, is_asynccontextmanagerfunction
 from frozenlist import FrozenList
 from reductable_params import reduce
 
-_P = ParamSpec("_P")
 # overloaders so that different parameter names or formations can be used,
 # also for usage with hooks
+_P = ParamSpec("_P")
 _P2 = ParamSpec("_P2")
 _T = TypeVar("_T")
 
@@ -48,7 +48,8 @@ class ParamSignal(Generic[_P], FrozenList[Callable[..., Awaitable[object]]]):
     ) -> Callable[_P2, Coroutine[Any, Any, _T]]:
         """Decorator for adding a callback for this signal. It will be wrapped
         in a reduce class to only obtain needed parameters"""
-        self.append(func)
+        # Just lie to it. Hooks can enable take dynamic arguments anyways...
+        self.append(cast(Callable[_P, Coroutine[Any, Any, object]], func))
         return func
 
     def hook(
@@ -82,11 +83,12 @@ class ParamSignal(Generic[_P], FrozenList[Callable[..., Awaitable[object]]]):
         if not self.frozen:
             raise RuntimeError("Cannot send a non-frozen signal.")
         if not (self or self._hooks):
-            # Empty do not continue
+            # Empty, do not continue
             return
         params = self._parent.install(*args, **kwargs)
-        # install any other hooks that are seen before the final sendoff
-        # takes place...
+
+        # Install any other hooks that are seen
+        # before the final sendoff takes place...
         async with self._hooks.send(params) as hooks:
             params.update(hooks)
 

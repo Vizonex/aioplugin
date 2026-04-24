@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import sys
-from collections.abc import Awaitable, Callable, Mapping
-from typing import Any, Concatenate, Generic, Protocol, TypeVar, overload
+from collections.abc import Awaitable, Callable, MutableMapping
+from typing import Any, Concatenate, Generic, Protocol, overload
 
 from .paramsignal import _P, ParamSignal
 
@@ -11,11 +11,9 @@ if sys.version_info >= (3, 11):
 else:
     Self = Any
 
-_Events = TypeVar("_Cache", bound=Mapping[str, ParamSignal[...]])
 
-
-class _EventImpl(Protocol[_Events]):
-    _events: _Events
+class _EventImpl(Protocol):
+    _events: MutableMapping[str, ParamSignal[...]]
 
 
 class event(Generic[_P]):
@@ -36,20 +34,20 @@ class event(Generic[_P]):
 
     @overload
     def __get__(
-        self, inst: _EventImpl[Any], owner: type[object] | None = None
+        self, inst: _EventImpl, owner: type[object] | None = None
     ) -> ParamSignal[_P]: ...
 
     def __get__(
-        self, inst: _EventImpl[Any] | None, owner: type[object] | None = None
+        self, inst: _EventImpl | None, owner: type[object] | None = None
     ) -> ParamSignal[_P] | Self:
         if inst is None:
             return self
         try:
             return inst._events[self.name]  # type: ignore[no-any-return]
         except KeyError:
-            val = ParamSignal(inst, self.__wrapped__)
-            inst._events[self.name] = val
-            return val
+            return inst._events.setdefault(
+                self.name, ParamSignal(inst, self.__wrapped__)
+            )
 
     def __set__(self, inst: _EventImpl, value: ParamSignal[_P]) -> None:
         raise AttributeError("event property is read-only.")
