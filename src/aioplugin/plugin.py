@@ -71,10 +71,6 @@ class AbstractPlugin(ABC):
 
     def freeze(self) -> None:
         """Freezes all events wrapped to this specific object"""
-        if self.frozen:
-            # Do not let overdoing reduce wrappers jack this up...
-            return
-
         for e in self.__events__:
             e.freeze()
 
