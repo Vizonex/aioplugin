@@ -1,5 +1,6 @@
 line-length = 80
 indent-width = 4
+target-version = "py310"
 
 [lint]
 select = [
@@ -9,5 +10,7 @@ select = [
     "E",
     "W",
     # isort
-    "I001"
+    "I001",
+    # pyupgrade
+    "UP"
 ]
