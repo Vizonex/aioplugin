@@ -30,8 +30,7 @@ class RuffLinter:
             subprocess.run(
                 [self.get_bin()] + self.CMD,
                 check=True,
-                stderr=subprocess.PIPE,
-                stdout=subprocess.PIPE,
+                capture_output=True,
                 cwd=self.find_cwd(),
             )
         except subprocess.CalledProcessError as ex:
@@ -39,7 +38,7 @@ class RuffLinter:
             output += "\n"
             output += ex.stderr.decode()
             raise AssertionError(
-                "ruff validation failed: {}\n{}".format(ex, output)
+                f"ruff validation failed: {ex}\n{output}"
             ) from None
 
     def test_source_code(self) -> None:
