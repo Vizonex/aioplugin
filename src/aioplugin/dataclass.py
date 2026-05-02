@@ -4,11 +4,11 @@ from typing import Any
 from freezabledict import FrozenDict
 
 from .paramsignal import ParamSignal
-from .plugin import _Plugin
+from .plugin import AbstractPlugin
 
 
 @dataclass
-class DataclassPlugin(_Plugin):
+class DataclassPlugin(AbstractPlugin):
     """Use if your main plugin object requires the use of dataclasses."""
 
     _events: FrozenDict[str, ParamSignal[...]] = field(
@@ -21,7 +21,7 @@ class DataclassPlugin(_Plugin):
 
 
 @dataclass(slots=True)
-class DataclassSlotsPlugin(_Plugin):
+class DataclassSlotsPlugin(AbstractPlugin):
     """Use if your main plugin object requires the use of dataclasses
     with slots enabled."""
 
