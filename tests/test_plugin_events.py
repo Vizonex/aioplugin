@@ -3,7 +3,7 @@ from typing import TypeVar
 
 import pytest
 
-from aioplugin import Plugin, event
+from aioplugin import Plugin, event, update_event
 
 pytestmark = pytest.mark.anyio
 
@@ -16,6 +16,9 @@ class Base(Plugin):
 
     @event
     async def on_other(self, number: int) -> None: ...
+
+    @update_event
+    async def on_update(self, number: int) -> None: ...
 
 
 class AdditionalPlugin:
@@ -102,6 +105,28 @@ async def test_defaults(base: Base) -> None:
     base.freeze()
     await base.on_event.send("You Died!")
     await base.on_event.send(a="You Died!")
+
+
+async def test_updater(base: Base) -> None:
+
+    # NOTE: Most of the coverage of update_event is done
+    # in aiocallback so you won't see many tests for it here...
+    data = []
+
+    @base.on_update
+    async def on_event(number: int) -> None:
+        data.append(number)
+        assert number in {1, 2, 3}
+
+    @base.on_update.hook
+    async def on_hook(number: int):
+        assert number in {1, 2, 3}
+        yield
+
+    base.freeze()
+    async with base.on_update.automatic():
+        await base.on_update.poll([1, 2, 2, 1, 3, 3])
+    assert data == [1, 2, 3]
 
 
 def test_disallowing_replacements(base: Base) -> None:

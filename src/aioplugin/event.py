@@ -4,7 +4,7 @@ import sys
 from collections.abc import Awaitable, Callable, MutableMapping
 from typing import Any, Concatenate, Generic, Protocol, overload
 
-from .paramsignal import _P, ParamSignal
+from .paramsignal import _P, ParamSignal, ParamUpdateSignal
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -50,4 +50,34 @@ class event(Generic[_P]):
             )
 
     def __set__(self, inst: _EventImpl, value: ParamSignal[_P]) -> None:
+        raise AttributeError("event property is read-only.")
+
+
+class update_event(event[_P]):
+    """shares simillar tooling to propcache but
+    it is used for wrapping and storing events"""
+
+    @overload
+    def __get__(
+        self, inst: None, owner: type[object] | None = None
+    ) -> Self: ...
+
+    @overload
+    def __get__(
+        self, inst: _EventImpl, owner: type[object] | None = None
+    ) -> ParamUpdateSignal[_P]: ...
+
+    def __get__(
+        self, inst: _EventImpl | None, owner: type[object] | None = None
+    ) -> ParamUpdateSignal[_P] | Self:
+        if inst is None:
+            return self
+        try:
+            return inst._events[self.name]  # type: ignore[no-any-return]
+        except KeyError:
+            return inst._events.setdefault(
+                self.name, ParamUpdateSignal(inst, self.__wrapped__)
+            )
+
+    def __set__(self, inst: _EventImpl, value: ParamUpdateSignal[_P]) -> None:
         raise AttributeError("event property is read-only.")

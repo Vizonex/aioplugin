@@ -57,29 +57,6 @@ async def test_function_signal_dispatch_kwargs(owner: Owner) -> None:
     await signal.send(**kwargs)
 
 
-# TODO: This is broken because we changed up the backend very good...
-# def test_repr(owner: Owner) -> None:
-#     async def foo(args) -> None:
-#         pass
-
-#     signal = ParamSignal(owner, foo)
-
-#     signal.append(mock.Mock(__repr__=lambda *a: "<callback>"))
-
-#     assert r"<callback>" in repr(signal)
-
-
-# def test_repr_frozen(owner: Owner) -> None:
-#     async def foo(args) -> None:
-#         pass
-
-#     signal = ParamSignal(owner, foo)
-
-#     signal.append(mock.Mock(__repr__=lambda *a: "<callback>"))
-#     signal.freeze()
-#     assert r"<reduc" in repr(signal)
-
-
 async def test_decorator_callback_dispatch_args_kwargs(owner: Owner) -> None:
 
     async def sig(a: int, b: int, c: str = "", d: str = "world") -> None:
