@@ -1,8 +1,9 @@
 -e .
 -r lint.txt
 pytest
-pytest-cov==7.1.0
+pytest-cov>=7.1.0
 anyio
 trio
+typing_extensions>=4.16.0
 uvloop>=0.22.1; sys_platform != 'win32'
 winloop; sys_platform == 'win32'

@@ -1,15 +1,9 @@
 from __future__ import annotations
 
-import sys
 from collections.abc import Awaitable, Callable, MutableMapping
-from typing import Any, Concatenate, Generic, Protocol, overload
+from typing import Any, Concatenate, Generic, Protocol, Self, overload
 
 from .paramsignal import _P, ParamSignal, ParamUpdateSignal
-
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    Self = Any
 
 
 class _EventImpl(Protocol):
