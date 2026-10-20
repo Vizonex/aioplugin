@@ -28,8 +28,8 @@ from aioplugin.plugin import Plugin
 
 
 class MyEvent(Plugin):
-    # you can very easily add your own data, it's recommended 
-    # to use typing.Generic for the best results if the data 
+    # you can very easily add your own data, it's recommended
+    # to use typing.Generic for the best results if the data
     # can be combined to other events.
     def __init__(self, items):
         super().__init__()
@@ -51,8 +51,8 @@ async def hello(name: str):
 
 
 async def main():
-    # Like aiosignal this comes with it's own freezing funciton. 
-    # This is inspired by aiocallback as aioplugin was meant 
+    # Like aiosignal this comes with it's own freezing funciton.
+    # This is inspired by aiocallback as aioplugin was meant
     # to remedy some of aiocallback's shortcomings and other various bugs.
     events.freeze()
     await events.on_name.send("World!")

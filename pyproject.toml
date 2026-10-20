@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Vizonex", email = "VizonexBusiness@gmail.com" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "aiocallback>=0.4.0",
     "freezabledict2>=0.1.0",
